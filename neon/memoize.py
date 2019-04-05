@@ -1,6 +1,8 @@
 import collections
 from collections import defaultdict as ddict
 from .util import _logger
+import inspect
+import functools
 
 MEMO = ddict(dict)
 
@@ -9,6 +11,7 @@ def memoize(func):
     """Warning: Use the memoize function at your own risk.
     if the arguments to func can be changed by reference, you might memoize things that you shouldn't
     """
+    _logger(func)
     binder = inspect.signature(func).bind
     logger = _logger(func)
     @functools.wraps(func)
@@ -16,7 +19,7 @@ def memoize(func):
         sig = binder(*args, **kwargs)
         sig.apply_defaults()
         sig = tuple(sig.arguments.items())
-        if not all(isinstance(sig.values(), collections.Hashable)):
+        if not all([isinstance(x, collections.Hashable) for w,x in sig]):
             logger.debug("skipping memoization: not all parameters are hashable")
             return func(*args, **kwargs)
         if sig not in MEMO[func]:
@@ -30,4 +33,3 @@ def memoize(func):
 def clear_memos(f):
     if f in MEMO:
         del MEMO[f]
-

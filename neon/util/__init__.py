@@ -1,4 +1,4 @@
-import logger
+import logging
 
 def _funcname(f):
     return "<Neon.Func: {}>".format(f.__name__)
@@ -6,4 +6,4 @@ def _funcname(f):
 def _logger(func):
     logger = logging.getLogger("NEON."+_funcname(func))
     logging.basicConfig(level=logging.DEBUG)
-    return logging
+    return logger
